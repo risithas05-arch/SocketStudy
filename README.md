@@ -54,51 +54,36 @@ Socket programming finds applications in various domains, including web developm
 5.	RPC mechanisms: which allow processes to execute code on a remote server, often use socket programming for communication.
 
 ## Program:
-```
+### Client
+```python
 import socket
-import threading
-import time 
-def server():
-    s=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.bind(("127.0.0.1",5000))
-    s.listen(1)
-    print("server waiting")
-
-    conn, addr=s.accept()
-    print("connected by :",addr)
-    data=conn.recv(1024)
-    print("client says: ",data.decode())
-
-    conn.send("Hello from Saveetha ".encode())
-    conn.close()
-    s.close()
-
-def client():
-    time.sleep(1)
-
-    c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    c.connect(("127.0.0.1", 5000))
-
-    c.send("Welcome".encode())
-
-    response = c.recv(1024)
-    print("Server says:", response.decode())
-
+from datetime import datetime
+s=socket.socket()
+s.bind(('localhost',8000))
+s.listen(5)
+c,addr=s.accept()
+print("Client Address : ",addr)
+now = datetime.now()
+c.send(now.strftime("%d/%m/%Y %H:%M:%S").encode())
+ack=c.recv(1024).decode()
+if ack:
+    print(ack)
     c.close()
-
-server_thread = threading.Thread(target=server)
-client_thread = threading.Thread(target=client)
-
-server_thread.start()
-client_thread.start()
-
-server_thread.join()
-client_thread.join()
-
 ```
+### Server
+```python
+import socket
+s=socket.socket()
+s.connect(('localhost',8000))
+print(s.getsockname())
+print(s.recv(1024).decode())
+s.send("acknowledgement recived from the server".encode())
+```
+
+
 
 ## Output:
-<img width="1135" height="477" alt="Screenshot 2026-04-28 094652" src="https://github.com/user-attachments/assets/080c2172-6f12-4cb6-bf06-ec65981f61c6" />
+<img width="1806" height="918" alt="image" src="https://github.com/user-attachments/assets/af07fd55-9b97-4672-a942-1852f81c1c4d" />
 
 ## Result:
 Thus the study of Socket Programming Completed Successfully
